@@ -7,7 +7,11 @@ python -m venv .venv
 #for macos/linux
 source .venv/bin/activate
 ```
-then install all dependencies and run with
+then install all dependencies 
+```
+pip install opencv-python torch facenet-pytorch deepface numpy
+```
+and run with
 ```
 python main.py
 ```
