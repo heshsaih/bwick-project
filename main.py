@@ -9,10 +9,11 @@ from queue import Queue
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 detector = MTCNN(keep_all=True, device=device)
 
+# Initialize queues for task management
 task_queue = Queue()
 result_queue = Queue()
 
-def analyzer_worker():
+def analyzer_worker_faces():
     while True:
         faces = task_queue.get()
         if faces is None:
@@ -36,20 +37,24 @@ def analyzer_worker():
         result_queue.put(parsed)
         task_queue.task_done()
 
-analyzer = Thread(target=analyzer_worker, daemon=True)
+analyzer = Thread(target=analyzer_worker_faces, daemon=True)
 analyzer.start()
 
 dam = cv2.VideoCapture(2)
 if not dam.isOpened():
     raise IOError("Could not open camera. Check the camera index.")
 
+# Constants for processing image frames
 SCALE = 0.5
-ANALYZE_INTERVAL = 5
+ANALYZE_INTERVAL = 0.25  # Analyze every 0.25 seconds
 frame_count = 0
 last_results = []
 
+# Constants for processing audio input
+
 print("Starting race detector. Press 'q' to quit.")
 
+# Main loop for reading frames from the camera
 while True:
     ret, frame = dam.read()
     if not ret:
@@ -99,6 +104,7 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+# Cleanup
 dam.release()
 cv2.destroyAllWindows()
 task_queue.put(None)
