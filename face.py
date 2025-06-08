@@ -3,8 +3,8 @@ import torch
 import numpy as np
 from facenet_pytorch import MTCNN
 from deepface import DeepFace
-from threading import Thread
 from queue import Queue
+from threading import Thread
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 detector = MTCNN(keep_all=True, device=device)
@@ -37,6 +37,7 @@ def analyzer_worker_faces():
         result_queue.put(parsed)
         task_queue.task_done()
 
+# Start the face analysis thread
 analyzer = Thread(target=analyzer_worker_faces, daemon=True)
 analyzer.start()
 
