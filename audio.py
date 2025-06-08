@@ -62,7 +62,7 @@ stream = pa.open(
     frames_per_buffer=CHUNK
 )
 
-window_name = "Audio Spectrum"
+window_name = "Gender Detector"
 cv2.namedWindow(window_name)
 
 try:
