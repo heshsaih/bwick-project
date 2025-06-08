@@ -25,7 +25,7 @@ def analyzer_worker_faces():
                     img_path=face,
                     actions=['race'],
                     enforce_detection=False,
-                    detector_backend='opencv'
+                    detector_backend='mtcnn'
                 )
                 result = res[0] if isinstance(res, list) else res
                 label = result['dominant_race']
@@ -50,8 +50,6 @@ SCALE = 0.5
 ANALYZE_INTERVAL = 0.25  # Analyze every 0.25 seconds
 frame_count = 0
 last_results = []
-
-# Constants for processing audio input
 
 print("Starting race detector. Press 'q' to quit.")
 
