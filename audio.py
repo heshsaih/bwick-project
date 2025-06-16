@@ -30,6 +30,7 @@ alpha = 0.9
 
 spec_height = disp_height - 50
 
+
 def draw_spectrum(bins, width, height):
     """
     Draws a spectrogram from the given frequency bins.
@@ -51,6 +52,7 @@ def draw_spectrum(bins, width, height):
             -1
         )
     return img
+
 
 daemon = False
 pa = pyaudio.PyAudio()
@@ -87,7 +89,7 @@ try:
 
         if not active:
             bins = np.zeros_like(bins)  # Reset bins if not active
-            prev_bins[:] = 0 # Reset previous bins
+            prev_bins[:] = 0  # Reset previous bins
             f0_buffer.clear()  # Clear F0 buffer when inactive
             label_buffer.clear()  # Clear label buffer when inactive
             smoothed_f0 = 0.0
@@ -95,8 +97,7 @@ try:
         else:
             bins = alpha * bins + (1 - alpha) * prev_bins
             prev_bins[:] = bins
-            # Estimation of fundamental frequency with yin alhorithm to detect the gender of the speaker
-            f0 = librosa.yin(
+            f0 = librosa.pyin(
                 samples,
                 fmin=50.0,
                 fmax=500.0,
@@ -104,9 +105,10 @@ try:
                 frame_length=2048,
                 hop_length=128
             )
-            f0_nonan = f0[~np.isnan(f0)]
+            f0_no_voiced = f0[0][f0[1]]
+            f0_nonan = f0_no_voiced[~np.isnan(f0_no_voiced)]
             avg_f0 = float(np.mean(f0_nonan)) if f0_nonan.size > 0 else 0.0
-            
+
             f0_buffer.append(avg_f0)
             smoothed_f0 = np.mean(f0_buffer) if f0_buffer else avg_f0
 
@@ -118,7 +120,7 @@ try:
                 gender = mode(label_buffer)
             except StatisticsError:
                 gender = current_label  # Fallback to current label if mode cannot be determined
-        
+
         # Draw the spectrogram
         spectogram_img = draw_spectrum(bins, disp_width, spec_height)
         # Create a canvas to display the spectrogram and text

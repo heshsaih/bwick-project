@@ -1,6 +1,5 @@
 import cv2
 import torch
-import numpy as np
 from facenet_pytorch import MTCNN
 from deepface import DeepFace
 from queue import Queue
@@ -41,7 +40,7 @@ def analyzer_worker_faces():
 analyzer = Thread(target=analyzer_worker_faces, daemon=True)
 analyzer.start()
 
-dam = cv2.VideoCapture(2)
+dam = cv2.VideoCapture(0)
 if not dam.isOpened():
     raise IOError("Could not open camera. Check the camera index.")
 
