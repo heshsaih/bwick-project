@@ -45,6 +45,7 @@ for true_label in CLASSES:
         if img is None:
             print(f"Error reading image {fpath}")
             continue
+        print(f"Analizing file: {fpath}...")
 
         try:
             res = DeepFace.analyze(
@@ -96,7 +97,7 @@ for race in results.keys():
         correct_predictions = results[race]["hit"]
         print(f"\tCorrect predictions: {correct_predictions}")
         race_accuracy = (correct_predictions / total_predictions) * 100
-        print(f"\tPrediction accuracy for the race: {race_accuracy:.2f}")
+        print(f"\tPrediction accuracy for the race: {race_accuracy:.2f}%")
         print("Errors: ")
         for error in results[race]["errors"]:
             err_fpath = error["fpath"]
@@ -106,3 +107,17 @@ for race in results.keys():
             err_actual = error["actual"]
             print(f"\t\tActual: {err_actual}")
         print("")
+    elif race == "else":
+        print(f"{race}: ")
+        total_misses = results[race]["predicted"]
+        print(f"\tTotal misses: {total_misses}")
+        percentage = (total_misses / total) * 100
+        print(f"\tPercentage of misses: {percentage:.2f}%")
+        print("Errors: ")
+        for error in results[race]["errors"]:
+            err_fpath = error["fpath"]
+            print(f"\n\t\tFile: {err_fpath}")
+            err_predicted = error["predicted"]
+            print(f"\t\tPredicted: {err_predicted}")
+            err_actual = error["actual"]
+            print(f"\t\tActual: {err_actual}")
